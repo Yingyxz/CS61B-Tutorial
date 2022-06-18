@@ -1,20 +1,21 @@
 package deque;
+
 //import java.util.Iterator;
 
-public class LinkedListDeque<T> {
+public class LinkedListDeque<T> implements Deque<T> {
 
-    public static void main(String[] args){
-        LinkedListDeque<Integer> l = new LinkedListDeque<>(3);
-        l.addFirst(4);
-        l.addLast(2);
-        boolean b = l.isEmpty();
-        l.printDeque();
-        l.removeFirst();
-        l.removeLast();
-        System.out.println(l.get(1));
-
-        System.out.println(2);
-    }
+//    public static void main(String[] args){
+//        LinkedListDeque<Integer> l = new LinkedListDeque<>(3);
+//        l.addFirst(4);
+//        l.addLast(2);
+//        boolean b = l.isEmpty();
+//        l.printDeque();
+//        l.removeFirst();
+//        l.removeLast();
+//        System.out.println(l.get(1));
+//
+//        System.out.println(2);
+//    }
     private class StuffNode{
         public StuffNode next;
         public StuffNode prev;
@@ -33,37 +34,38 @@ public class LinkedListDeque<T> {
     private StuffNode sentinel;
     private int size;
 
-    public LinkedListDeque(T a){
-        sentinel = new StuffNode(a,null,null);
-        sentinel.next = new StuffNode(a, sentinel, sentinel);
-        sentinel.prev = sentinel.next;
-        size = 1;
+    public LinkedListDeque(){
+        sentinel = new StuffNode(null,null,null);
+        sentinel.next = sentinel;
+        sentinel.prev = sentinel;
+        size = 0;
     }
-
+    @Override
     public void addFirst(T item){
-        sentinel.next.prev = new StuffNode(item, sentinel, sentinel.next);
-        sentinel.next = sentinel.next.prev;
+        sentinel.next = new StuffNode(item, sentinel, sentinel.next);
+        sentinel.next.next.prev = sentinel.next;
         size += 1;
     }
-
+    @Override
     public void addLast(T item){
         size +=1;
         sentinel.prev.next = new StuffNode(item, sentinel.prev, sentinel);
         sentinel.prev = sentinel.prev.next;
     }
 
-    public boolean isEmpty(){
-        if (sentinel.next == null) {
-            return true;
-        }else{
-            return false;
-        }
-    }
-
+//    public boolean isEmpty(){
+//        if (size == 0) {
+//            return true;
+//        }else{
+//            return false;
+//        }
+//    }
+    @Override
     public int size(){
         return size;
     }
 
+    @Override
     public void printDeque(){
         StuffNode p = sentinel;
         while(p.next != sentinel){
@@ -73,29 +75,42 @@ public class LinkedListDeque<T> {
         System.out.println();
     }
 
+    @Override
     public T removeFirst(){
-        sentinel.next.prev = null;
-        sentinel.next = sentinel.next.next;
-        sentinel.next.prev.next = null;
-        sentinel.next.prev = sentinel;
-        size -= 1;
-        return sentinel.next.get();
+        if(size == 0){
+            return null;
+        }else{
+            T a = sentinel.next.get();
+            sentinel.next.prev = null;
+            sentinel.next = sentinel.next.next;
+            sentinel.next.prev.next = null;
+            sentinel.next.prev = sentinel;
+            size -= 1;
+            return a;
+        }
+
     }
 
+    @Override
     public T removeLast(){
-        sentinel.prev.next = null;
-        sentinel.prev = sentinel.prev.prev;
-        sentinel.prev.next.prev = null;
-        sentinel.prev.next = sentinel;
-        size -= 1;
-        return sentinel.prev.get();
-
+        if(size == 0){
+            return null;
+        }else {
+            T a = sentinel.prev.get();
+            sentinel.prev.next = null;
+            sentinel.prev = sentinel.prev.prev;
+            sentinel.prev.next.prev = null;
+            sentinel.prev.next = sentinel;
+            size -= 1;
+            return a;
+        }
     }
 
+    @Override
     public T get(int index){
-        if(index <= size) {
+        if(index < size) {
             StuffNode p = sentinel;
-            int ind = 1;
+            int ind = 0;
             while (ind != index) {
                 p = p.next;
                 ind += 1;
